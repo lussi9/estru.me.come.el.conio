@@ -109,17 +109,20 @@ BuscaMax:       consPILA()
                 xor r11, r11, r11 ;longitud cadena coincidencia
                 subu r22, r0, 1 ;valor -1
                 st r22, r21, 0 ;lo guarda en jj
+
 BUCMAX:         st r21, r31, -8 ;guardo jj
-                st r3, r31, -4;guardo to 
+                st r11, r31, -4;guardo to 
+                PUSH(r3)
                 PUSH(r10) ;p (r10) es el from
                 PUSH(r2) ;ref (r2) es la cadena
-                addu r4, r2, r3 ;ref[max]
+                ld.bu r4, r2, r3 ;ref[max]
                 PUSH(r4) ;ref[max] es caracter a buscar
                 bsr BuscaCar
                 POP(r4)
                 POP(r2)
                 POP(r10)
-                ld r3, r31, -4 ;guardo to
+                POP(r3)
+                ld r11, r31, -4 ;guardo to
                 ld r21, r31, -8;jj
                 cmp r7, r29, r3 ;si buscacar es igual a max
                 bb1 eq, r7, FINMAX ;no esta el caracter y se sale
@@ -127,6 +130,7 @@ BUCMAX:         st r21, r31, -8 ;guardo jj
                 st r2, r31, -12 ;guardo ref
                 st r3, r31, -8 ;guardo max
                 st r21, r31, -4;contador
+                addu r4, r2, r3;ref[max]
                 addu r5, r2, r10 ;copio ref(p)
                 PUSH(r5)
                 PUSH(r4)
@@ -140,12 +144,10 @@ BUCMAX:         st r21, r31, -8 ;guardo jj
                 cmp r7, r29, 255 ;si la longitud es 255 o mas
                 bb1 ge, r7, ACT255
                 cmp r7, r29, r11 ;comparo si es mayor el nuevo valor
-                bb1 gt, r7, ACT
-                addu r10, r10, 1    
-                br BUCMAX
-ACT:            or r11, r29, 0 ;actualiza la longitud
+                bb0 gt, r7, NEXT
+                or r11, r29, 0 ;actualiza la longitud
                 st r10, r21, 0 ;guarda p en jj?
-                addu r10, r10, 1        ;suma 1 a la posicion
+NEXT:           addu r10, r10, 1        ;suma 1 a la posicion
                 br BUCMAX
 ACT255:         addu r11, r0, 255 ;la nueva longitud es 255
                 st r10, r21, 0 ;guarda la posicion
@@ -156,7 +158,7 @@ FINMAX:         or r29, r11, 0 ;deja en r29 la longitud de la cadena mas larga
 
 ;subrutina Comprime
 Comprime:       consPILA()
-                ld r2, r31, 8           ;texto
+                ld r2,r31,8           ;texto
                 ld r3,r31,12            ;comprdo
                 PUSH(r2)     
                 bsr LongCad
