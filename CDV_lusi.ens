@@ -114,21 +114,21 @@ VERIFI:
     POP(r12)
     stop
 
-
 ;Subrutina LongCad
 LongCad:        
-    ld r2, r30, 0           ;cadena
-    xor r5, r5, r5          ;contador
+    PUSH(r1)
+    ld r2, r30, 4 ;cadena
+    xor r5, r5, r5 ;contador
 BULONG:         
-    ld.bu r3, r2, r5        ;carga el caracter
-    cmp r4, r3, 0x00        ;comprueba si ha llegado al final
+    ld.bu r3, r2, r5 ;carga el caracter
+    cmp r4, r3, 0x00 ;comprueba si ha llegado al final
     bb1 eq, r4, FINLO
-    addu r5, r5, 1          ;incrementa el contador
+    addu r5, r5, 1 ;incrementa el contador
     br BULONG
 FINLO:          
-    or r29, r5, 0           ;carga el resultado en r29
+    or r29, r5, 0 ;carga el resultado en r29
+    POP(r1)
     jmp(r1)
-
 
 ;Subrutina BuscarCar
 BuscaCar:       
@@ -151,7 +151,6 @@ FINBU:
     POP(r1)
     jmp (r1)
 
-
 ;subrutina CoincidenCad
 CoincidenCad:   
     PUSH(r1)
@@ -173,7 +172,6 @@ FINCOI:
     or r29, r4, 0
     POP(r1)
     jmp(r1)
-
 
 ;subrutina BuscaMax
 BuscaMax:       
@@ -245,18 +243,20 @@ Comprime:
     PUSH(r2)     
     bsr LongCad
     POP(r2)
-    ld r3,r30,12            ;comprdo
+    ld r3,r30,12            ;punt comprdo
     addu r4,r29,0           ;longitud texto comprimir
     divu r20,r29,4          ;r20=r29/4   
     mulu r20,r20,4          ;r20=r20*4
     subu r20,r29,r20    
     cmp r7,r20,0            ;com si esta en exceso 4
     bb1 eq,r7,COMP2
-    addu r20,r20,4         
+    subu r20,r20,4         
 COMP2:
     subu r29,r29,r20    
     addu r29,r29,28         ;sumamos 28B adicionales a la pila
+    or r31, r30, r30
     subu r30,r30,r29        ;se crea marco de pila
+    st r29,r31,-28;
     xor r10,r10,r10         ;cont texto parametro
     xor r11,r11,r11         ;cont texto pila
     xor r12,r12,r12
@@ -290,13 +290,14 @@ COMP5BUC:
     POP(r2)
     POP(r10)
     POP(r14)
+    addu r5,r29,0           ;guarda res (BuscaMax) en r5 
     ld r11,r31,-8           ;carga cont texto pila
     ld r12,r31,-16          ;carga cont mapa de bits
     ld r13,r31,-20          ;carga punt de bits en bytes
-    ld r3,r31,-24           ;cargar cargar comprdo
-    addu r5,r29,0           ;guarda res (BuscaMax) en r5                                
+    ld r3,r31,-24           ;cargar cargar comprdo                               
     cmp r7,r5,4             ;comprueba si r5 es mayor igual que 4
-    bb1 hs,r7,COMP5C        ;si lo es salta
+    bb1 ge,r7,COMP5C        ;si lo es salta
+
     ld.bu r23,r2,r10        ;sino avanza un bit
     addu r10,r10,1
     st.b r23,r30,r11        ;lo copia en la pila
@@ -306,6 +307,7 @@ COMP5BUC:
     st.b r15,r3,r12         ;lo carga en el mapa de bits
     br ULTBIT               ;salta para comprobar si es el ultimo
 COMP5C: 
+    ld r14,r14,0
     st.b r14,r30,r11        ;guarda la direccion obtenida en la pila
     addu r11,r11,1          ;avanza puntero
     extu r14,r14,0<8>  
@@ -348,7 +350,7 @@ FINCOMP:
     addu r22,r22,1
     addu r24,r24,1
     cmp r7,r11,r24
-     bb0 eq,r7,FINCOMP      ;hasta llegar al final
+    bb0 eq,r7,FINCOMP      ;hasta llegar al final
     st.b r0,r3,r22          ;se pone un ultimo 0
     ld r23,r31,-28
     add r30, r30, r23       ;se recupera el valor de la pila
@@ -448,9 +450,9 @@ Verifica:
     bb1 eq, r7, PILACOM
     addu r4,r4,4            ;ajustamos
 PILACOM:
-    addu r23, r29, 7         ;r4+7
-    divu r23, r23, 8          ;r4/8
-    addu r23, r23, 4          ;r4+4 4=5(B cabecera)-1(B implicito)
+    addu r23, r29, 7         ;r23+7
+    divu r23, r23, 8          ;r23/8
+    addu r23, r23, 4          ;r23+4 4=5(B cabecera)-1(B implicito)
     addu r23, r29, r23
     divu r6, r23, 4
     mulu r6, r4, 4
@@ -500,15 +502,15 @@ PILADES:
     POP(r12)
     POP(r14)
     POP(r16)
-    cmp r7, r29, r16
-    bb1 ne, r7, Caso2
-    or r29, r0, 0
+    cmp r7, r16, r29
+    bb1 ne, r7, Caso2       ;si el contenido no es el mismo salta
+    add r29, r0, 0          
     br fVerifica
 Caso1:
     sub r29,r0,1           ;r29 = -1
     br fVerifica
-Caso2:
-    sub r29, r0, 2         ;r29 = -2
+Caso2:  
+    sub r29, r0, 2         ;r29 = -2   
 fVerifica:
     destPILA()
     jmp(r1)
