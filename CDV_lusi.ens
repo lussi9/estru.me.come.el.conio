@@ -118,16 +118,16 @@ VERIFI:
 ;Subrutina LongCad
 LongCad:        
     PUSH(r1)
-    ld r2, r30, 4           ;cadena
-    xor r5, r5, r5          ;contador
+    ld r2, r30, 4           		;cadena
+    xor r5, r5, r5          		;contador
 BULONG:         
-    ld.bu r3, r2, r5        ;carga el caracter
-    cmp r4, r3, 0x00        ;comprueba si ha llegado al final
+    ld.bu r3, r2, r5        		;carga el caracter
+    cmp r4, r3, 0x00        		;comprueba si ha llegado al final
     bb1 eq, r4, FINLO
-    addu r5, r5, 1          ;incrementa el contador
+    addu r5, r5, 1          		;incrementa el contador
     br BULONG
 FINLO:          
-    or r29, r5, 0           ;carga el resultado en r29
+    or r29, r5, 0           		;carga el resultado en r29
     POP(r1)
     jmp(r1)
 
@@ -135,21 +135,21 @@ FINLO:
 ;Subrutina BuscarCar
 BuscaCar:       
     PUSH(r1)
-    ld r2, r30, 4           ;caracter q se busca
-    ld r3, r30, 8           ;cadena en la q se busca
-    ld r4, r30, 12          ;posicion inicial
-    ld r5, r30, 16          ;posicion final
-    or r6, r4, 0            ;indice de la cadena
+    ld r2, r30, 4           		;caracter q se busca
+    ld r3, r30, 8           		;cadena en la q se busca
+    ld r4, r30, 12          		;posicion inicial
+    ld r5, r30, 16          		;posicion final
+    or r6, r4, 0            		;indice de la cadena
 BUCAR:          
-    ld.bu r7, r3, r6        ;elemento de la cadena
-    cmp r8, r7, r2          ;compara en r8 si r7 es igual al elem r2
-    bb1 eq, r8, FINBU       ;si son iguales devuelve la posicion
-    addu r6, r6, 1          ;incrementa la posicion
-    cmp r8, r6, r5          ;comprueba si ha llegado al final
-    bb1 ge, r8, FINBU       ;si ha llegado devuelve 'to'
+    ld.bu r7, r3, r6        		;elemento de la cadena
+    cmp r8, r7, r2          		;compara en r8 si r7 es igual al elem r2
+    bb1 eq, r8, FINBU       		;si son iguales devuelve la posicion
+    addu r6, r6, 1         		;incrementa la posicion
+    cmp r8, r6, r5          		;comprueba si ha llegado al final
+    bb1 ge, r8, FINBU      		;si ha llegado devuelve 'to'
     br BUCAR
 FINBU:          
-    or r29, r6, 0           ;devuelve la posicion
+    or r29, r6, 0           		;devuelve la posicion
     POP(r1)
     jmp (r1)
 
@@ -157,19 +157,19 @@ FINBU:
 ;subrutina CoincidenCad
 CoincidenCad:   
     PUSH(r1)
-    ld r2, r30, 4           ;cadena 1
-    ld r3, r30, 8           ;cadena 2
-    xor r4, r4, r4          ;contador
+    ld r2, r30, 4           		;cadena 1
+    ld r3, r30, 8          		;cadena 2
+    xor r4, r4, r4          		;contador
 BUCOIN:         
-    ld.bu r5, r2, r4        ;caracter cadena 1
-    ld.bu r6, r3, r4        ;caracter cadena 2
-    cmp r7, r5, 0x00        ;si la primera cadena ha llegado al final
+    ld.bu r5, r2, r4        		;caracter cadena 1
+    ld.bu r6, r3, r4        		;caracter cadena 2
+    cmp r7, r5, 0x00        		;si la primera cadena ha llegado al final
     bb1 eq, r7, FINCOI 
-    cmp r7, r6, 0x00        ;si la segunda cadena ha llegado al final
+    cmp r7, r6, 0x00		        ;si la segunda cadena ha llegado al final
     bb1 eq, r7, FINCOI
-    cmp r7, r5, r6          ;comprobamos si son iguales
-    bb1 ne, r7, FINCOI      ;si no son iguales va al final
-    addu r4, r4, 1          ;incrementamos contador
+    cmp r7, r5, r6          		;comprobamos si son iguales
+    bb1 ne, r7, FINCOI      		;si no son iguales va al final
+    addu r4, r4, 1         		;incrementamos contador
     br BUCOIN
 FINCOI:        
     or r29, r4, 0
@@ -181,124 +181,124 @@ FINCOI:
 BuscaMax:       
     consPILA()
     subu r30, r30, 12 
-    ld r2, r31, 8           ;ref
-    ld r3, r31, 12          ;max
-    ld r21, r31, 16         ;jj
-    xor r10, r10, r10       ;marcador posicion p
-    xor r11, r11, r11       ;longitud cadena coincidencia
-    subu r22, r0, 1         ;valor -1
-    st r22, r21, 0          ;lo guarda en jj
+    ld r2, r31, 8           		;ref
+    ld r3, r31, 12          		;max
+    ld r21, r31, 16         		;jj
+    xor r10, r10, r10       		;marcador posicion p
+    xor r11, r11, r11       		;longitud cadena coincidencia
+    subu r22, r0, 1         		;valor -1
+    st r22, r21, 0          		;lo guarda en jj
 
 BUCMAX:        
     cmp r7, r10, r3
     bb1 eq, r7, FINMAX
-    st r21, r31, -8         ;guardo jj
-    st r11, r31, -4         ;guardo to 
+    st r21, r31, -8	 		;guardo jj
+    st r11, r31, -4		       	;guardo to 
     PUSH(r3)
-    PUSH(r10)               ;p (r10) es el from
-    PUSH(r2)                ;ref (r2) es la cadena
-    ld.bu r4, r2, r3        ;ref[max]
-    PUSH(r4)                ;ref[max] es caracter a buscar
+    PUSH(r10)               		;p (r10) es el from
+    PUSH(r2)                		;ref (r2) es la cadena
+    ld.bu r4, r2, r3        		;ref[max]
+    PUSH(r4)                		;ref[max] es caracter a buscar
     bsr BuscaCar
     POP(r4)
     POP(r2)
     POP(r10)
     POP(r3)
-    ld r11, r31, -4         ;guardo to
-    ld r21, r31, -8         ;jj
-    cmp r7, r29, r3         ;si buscacar es igual a max
-    bb1 eq, r7, FINMAX      ;no esta el caracter y se sale
-    addu r10, r29, 0        ;avanza p hasta pos de buscacar
-    st r2, r31, -12         ;guardo ref
-    st r3, r31, -8          ;guardo max
-    st r21, r31, -4         ;contador
-    addu r4, r2, r3         ;ref[max]
-    addu r5, r2, r10        ;copio ref(p)
+    ld r11, r31, -4         		;guardo to
+    ld r21, r31, -8         		;jj
+    cmp r7, r29, r3         		;si buscacar es igual a max
+    bb1 eq, r7, FINMAX      		;no esta el caracter y se sale
+    addu r10, r29, 0        		;avanza p hasta pos de buscacar
+    st r2, r31, -12         		;guardo ref
+    st r3, r31, -8          		;guardo max
+    st r21, r31, -4 		        ;contador
+    addu r4, r2, r3         		;ref[max]
+    addu r5, r2, r10        		;copio ref(p)
     PUSH(r5)
     PUSH(r4)
     or r29,r0,r0
     bsr CoincidenCad
     POP(r4)
     POP(r5)
-    ld r2, r31, -12         ;guardo ref
-    ld r3, r31, -8          ;guardo max
-    ld r21, r31, -4         ;contador
-    cmp r7, r29, 255        ;si la longitud es 255 o mas
+    ld r2, r31, -12         		;guardo ref	
+    ld r3, r31, -8          		;guardo max
+    ld r21, r31, -4         		;contador
+    cmp r7, r29, 255        		;si la longitud es 255 o mas
     bb1 ge, r7, ACT255
-    cmp r7, r29, r11        ;comparo si es mayor el nuevo valor
+    cmp r7, r29, r11        		;comparo si es mayor el nuevo valor
     bb0 gt, r7, NEXT
-    or r11, r29, 0          ;actualiza la longitud
-    st r10, r21, 0          ;guarda p en jj?
+    or r11, r29, 0          		;actualiza la longitud
+    st r10, r21, 0          		;guarda p en jj?
 NEXT:           
-    addu r10, r10, 1        ;suma 1 a la posicion
+    addu r10, r10, 1        		;suma 1 a la posicion
     br BUCMAX
 ACT255:
-    addu r11, r0, 255       ;la nueva longitud es 255
-    st r10, r21, 0          ;guarda la posicion
+    addu r11, r0, 255       		;la nueva longitud es 255
+    st r10, r21, 0          		;guarda la posicion
 FINMAX:
-    or r29, r11, 0          ;deja en r29 la longitud de la cadena mas larga
+    or r29, r11, 0          		;deja en r29 la longitud de la cadena mas larga
     destPILA()
     jmp(r1)   
 
 ;subrutina Comprime
 Comprime:       
     consPILA()
-    ld r2,r30,8             ;texto
+    ld r2,r30,8			        ;texto
     PUSH(r2)     
     bsr LongCad
     POP(r2)
-    ld r3,r30,12            ;comprdo
-    addu r4,r29,0           ;longitud texto comprimir
-    divu r20,r29,4          ;r20=r29/4   
-    mulu r20,r20,4          ;r20=r20*4
+    ld r3,r30,12            		;comprdo
+    addu r4,r29,0           		;longitud texto comprimir
+    divu r20,r29,4          		;r20=r29/4   
+    mulu r20,r20,4          		;r20=r20*4
     subu r20,r29,r20    
-    cmp r7,r20,0            ;com si esta en exceso 4
+    cmp r7,r20,0            		;com si esta en exceso 4
     bb1 eq,r7,COMP2
     addu r20,r20,4         
 COMP2:
     subu r29,r29,r20    
-    addu r29,r29,28         ;sumamos 28B adicionales a la pila
-    subu r30,r30,r29        ;se crea marco de pila
-    xor r10,r10,r10         ;cont texto parametro
-    xor r11,r11,r11         ;cont texto pila
+    addu r29,r29,28         		;sumamos 28B adicionales a la pila
+    subu r30,r30,r29        		;se crea marco de pila
+    xor r10,r10,r10         		;cont texto parametro
+    xor r11,r11,r11         		;cont texto pila
     xor r12,r12,r12
-    addu r12,r0,5           ;cont mapa bits
-    addu r13,r0,39          ;puntero bits en byte
+    addu r12,r0,5       		;cont mapa bits
+    addu r13,r0,39		        ;puntero bits en byte
 COMP4:          
-    ld.bu r23,r2,r10        ;r23<-texto+contador
-    addu r10,r10,1          ;incrementa cont parametro
-    st.b r23,r30,r11        ;r11->pila+contador pila
-    addu r11,r11,1          ;incrementa cont pila    
-    cmp r7,r10,8            ;comprueba si cont texto param es 8
-    bb1 ne,r7,COMP4         ;si no es igual vuelve
-    st.b r0,r3,r12          ;0 en mapa bits
+    ld.bu r23,r2,r10        		;r23<-texto+contador
+    addu r10,r10,1          		;incrementa cont parametro
+    st.b r23,r30,r11        		;r11->pila+contador pila
+    addu r11,r11,1          		;incrementa cont pila    
+    cmp r7,r10,8            		;comprueba si cont texto param es 8
+    bb1 ne,r7,COMP4         		;si no es igual vuelve
+    st.b r0,r3,r12          		;0 en mapa bits
 COMP5:          
-    cmp r7,r13,31           ;si ha acabado byte
+    cmp r7,r13,31           		;si ha acabado byte
     bb1 ne,r7,COMP5BUC
-    addu r13,r0,39          ;rellena
-    addu r12,r12,1          ;incrementa cont mapa
-    st.b r0,r3,r12          ;0 en mapa bits
+    addu r13,r0,39          		;rellena
+    addu r12,r12,1          		;incrementa cont mapa
+    st.b r0,r3,r12          		;0 en mapa bits
 COMP5BUC:       
-    st r11,r31,-8           ;se guarda con texto pila
-    st r4,r31,-12           ;se guardan la longitud
-    st r12,r31,-16          ;se guarda el cont mapa bits
-    st r13,r31,-20          ;se guarda punt de bits en bytes
-    st r3,r31,-24           ; se guarda comprdo
-    subu r14,r31,4          ;cargamos jj en r14
-    PUSH(r14)               ;jj
-    PUSH(r10)               ;con texto parametro
-    PUSH(r2)                ;texto
+    st r11,r31,-8           		;se guarda con texto pila
+    st r4,r31,-12           		;se guardan la longitud
+    st r12,r31,-16          		;se guarda el cont mapa bits
+    st r13,r31,-20          		;se guarda punt de bits en bytes
+    st r3,r31,-24           		;se guarda comprdo
+    subu r14,r31,4          		;cargamos jj en r14
+    PUSH(r14)               		;jj
+    PUSH(r10)               		;con texto parametro
+    PUSH(r2)                		;texto
     bsr BuscaMax
     POP(r2)
     POP(r10)
     POP(r14)
-    ld r11,r31,-8           ;carga cont texto pila
-    ld r12,r31,-16          ;carga cont mapa de bits
-    ld r13,r31,-20          ;carga punt de bits en bytes
-    ld r3,r31,-24           ;cargar cargar comprdo
-    addu r5,r29,0           ;guarda res (BuscaMax) en r5                                
-    cmp r7,r5,4             ;comprueba si r5 es mayor igual que 4
-    bb1 hs,r7,COMP5C        ;si lo es salta
+    ld r11,r31,-8           		;carga cont texto pila
+    ld r12,r31,-16  		        ;carga cont mapa de bits
+    ld r13,r31,-20          		;carga punt de bits en bytes
+    ld r3,r31,-24	       		;cargar cargar comprdo
+    addu r5,r29,0           		;guarda res (BuscaMax) en r5                                
+    cmp r7,r5,4             		;comprueba si r5 es mayor igual que 4
+    bb1 hs,r7,COMP5C        		;si lo es salta
     ld.bu r23,r2,r10
     addu r10,r10,1
     st.b r23,r30,r11
@@ -360,37 +360,37 @@ FINCOMP:
 Descomprime:
     consPILA()
 	ld r2, r30, 8			;Puntero com
-    ld r3, r30, 12			;Puntero desc
+   	ld r3, r30, 12			;Puntero desc
 	xor r4, r4, r4			;Contador de com 
 	xor r5, r5, r5 			;Contador de des
 	xor r6, r6, r6			;Contador auxiliar
 	ld.bu r10, r4, r2		;LongCadena sin com
 	addu r4, r4, 1			;Avanza contador com
 	ld.bu r8, r2, r4		;LongCadena con com
-    mulu r8, r8, 256		;Pos byte1
-    addu r4, r4, 1			;Avanza contador com
+    	mulu r8, r8, 256		;Pos byte1
+    	addu r4, r4, 1			;Avanza contador com
 	addu r10, r10, r8		
 	ld.bu r8, r2, r4		;M
-    addu r4, r4, 1			;Avanza contador com
+    	addu r4, r4, 1			;Avanza contador com
 	mulu r8, r8, 8			;Bits sin comprimir	
 	ld.bu r9, r2, r4		;Contador en inicio de texto
 	addu r4, r4, 1			;Avanza contador com
 	ld.bu r11, r2, r4		;Bytes inicio de texto
-    addu r4, r4, 1			;Avanza contador com
+    	addu r4, r4, 1			;Avanza contador com
 	mulu r11, r11, 256		;Pos byte1 
 	addu r9, r9, r11		;r9=r9+r11
 HASTA8M:	
 	ld.bu r12, r2, r9		;Primer caracter
-    addu r9, r9, 1			;Avanza texto
-    addu r6, r6, 1			;Avanza contador aux
+   	 addu r9, r9, 1			;Avanza texto
+    	addu r6, r6, 1			;Avanza contador aux
 	st.b r12, r3, r5		;Cargamos primer caracter en desc
 	addu r5, r5, 1			;Avanza contador desc
 	cmp r7, r6, r8
 	bb1 eq, r7, BUDESC		;Si aux = 8 Avanza
-	br HASTA8M				;Si es distinto de 8 vuelve a HASTA8M
+	br HASTA8M			;Si es distinto de 8 vuelve a HASTA8M
 BUDESC:  
 	cmp r7, r6, 8
-	bb1 ne, r7, SIGUE	    ;Si hemos copiado 8 bits avanza
+	bb1 ne, r7, SIGUE	   	;Si hemos copiado 8 bits avanza
 	xor r6, r6, r6			;Contador a 0
 	ld.bu r13, r2, r4		;Carga Byte
 	addu r4, r4, 1			;Avanza contador com
@@ -407,7 +407,7 @@ BIT0:
 	addu r5, r5, 1			;Avanza contador desc
 	addu r6, r6, 1			;Avanza auxiliar
 	cmp r7, r5, r10
-	bb1 eq, r7, FINDESC	    ;Si la longitud es igual hemos terminado
+	bb1 eq, r7, FINDESC	   	;Si la longitud es igual hemos terminado
 	br BUDESC		
 BIT1:		
 	ld.bu r15, r2, r9		;Cargamos Byte inicio
@@ -420,29 +420,28 @@ BIT1:
 	addu r9, r9, 1			;Avanzamos al siguiente caracter
 BUCBIT:	
 	ld.bu r12, r3, r15		;Cargamos Byte
-    addu r15, r15, 1		;Avanzamos posicion
+    	addu r15, r15, 1		;Avanzamos posicion
 	st.b r12, r3, r5		;Guardamos caracter
 	addu r5, r5, 1			;Avanzamos desc
 	subu r16, r16, 1		;Actualizamos aux
 	cmp r7, r16, 0
-	bb1 ne, r7, BUCBIT	    ;Si no es igual seguimos copiando
-    addu r6, r6, 1			;Avanzamos contador
-    subu r14, r14, 1		;r14=r14-1
+	bb1 ne, r7, BUCBIT	    	;Si no es igual seguimos copiando
+    	addu r6, r6, 1			;Avanzamos contador
+    	subu r14, r14, 1		;r14=r14-1
 FINDESC:
-    cmp r7, r5, r10
+    	cmp r7, r5, r10
 	bb1 ne, r7, BUDESC		;Si no es igual vuelve a BUDESC
 	st.b r0, r3, r5			;Finalizamos con \0
 	addu r29, r5, 0
-    destPILA()		
+    	destPILA()		
 	jmp (r1)
 Verifica:	
-    consPILA()
-    ld	r2,r31,8            ;texto
-    PUSH(r20)
-    bsr LongCad
-    POP(r20)
-    addu r23,r29,0          ;r23=r29
+	consPILA()
+    	ld	r2,r31,8            	;texto
+    	PUSH(r20)
+    	bsr LongCad
+	POP(r20)
+	addu r23,r29,0          	;r23=r29
 
-
-    destPILA()
-    jmp(r1)
+    	destPILA()
+    	jmp(r1)
